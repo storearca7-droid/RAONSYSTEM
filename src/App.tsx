@@ -9,6 +9,7 @@ import { TripDetailsView } from './components/trips/TripDetailsView';
 import { TravelersView } from './components/travelers/TravelersView';
 import { FinancialView } from './components/financial/FinancialView';
 import { PartnersView } from './components/partners/PartnersView';
+import { ProductsView } from './components/products/ProductsView';
 import { ReportsView } from './components/reports/ReportsView';
 import { SettingsView } from './components/settings/SettingsView';
 import { PublicTripPage } from './components/public/PublicTripPage';
@@ -113,6 +114,7 @@ const AppContent: React.FC = () => {
                 {activeMenu === 'travelers' && <TravelersView />}
                 {activeMenu === 'financial' && <FinancialView />}
                 {activeMenu === 'partners' && <PartnersView />}
+                {activeMenu === 'products' && <ProductsView />}
                 {activeMenu === 'reports' && <ReportsView />}
                 {activeMenu === 'settings' && <SettingsView />}
               </>

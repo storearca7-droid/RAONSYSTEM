@@ -183,6 +183,7 @@ interface AppContextType {
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   adjustStock: (id: string, delta: number) => void;
+  resetProductsToInitial: () => void;
   buyProduct: (
     productId: string,
     cpf: string,
@@ -228,7 +229,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [trips, setTrips] = useState<Trip[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_trips');
-      return saved ? JSON.parse(saved) : INITIAL_TRIPS;
+      if (saved) {
+        const parsed: Trip[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(t => {
+            if (t.imageUrl?.includes('/src/assets/images/trip_beach_maragogi')) {
+              return { ...t, imageUrl: '/images/trips/maragogi.jpg' };
+            }
+            if (t.imageUrl?.includes('/src/assets/images/trip_cultural_colonial')) {
+              return { ...t, imageUrl: '/images/trips/colonial.jpg' };
+            }
+            if (t.imageUrl?.includes('/src/assets/images/trip_adventure_waterfall')) {
+              return { ...t, imageUrl: '/images/trips/aventura.jpg' };
+            }
+            return t;
+          });
+        }
+      }
+      return INITIAL_TRIPS;
     } catch {
       return INITIAL_TRIPS;
     }
@@ -282,7 +300,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [products, setProducts] = useState<Product[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_products');
-      return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+      if (saved) {
+        const parsed: Product[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // If stored products have external unsplash URLs or broken images, migrate them to local bundled images
+          return parsed.map(p => {
+            const initialMatch = INITIAL_PRODUCTS.find(ip => ip.id === p.id);
+            if (p.imageUrl?.includes('unsplash.com') || !p.imageUrl || p.imageUrl.includes('404')) {
+              return { ...p, imageUrl: initialMatch?.imageUrl || '/images/products/bone.jpg' };
+            }
+            return p;
+          });
+        }
+      }
+      return INITIAL_PRODUCTS;
     } catch {
       return INITIAL_PRODUCTS;
     }
@@ -304,6 +335,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const s = JSON.parse(saved);
         if (s.agencyName?.includes('DINHO TOUR')) {
           s.agencyName = 'Raon System — Gestão de Viagens';
+        }
+        if (s.logoUrl?.includes('/src/assets/images')) {
+          s.logoUrl = '/images/logo.jpg';
         }
         return s;
       }
@@ -375,6 +409,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(LOCAL_STORAGE_KEY + '_products', JSON.stringify(products));
     } catch (e) { console.error(e); }
   }, [products]);
+
+  // Ensure products list is never left empty if initialized with empty cache
+  useEffect(() => {
+    if (products.length === 0) {
+      setProducts(INITIAL_PRODUCTS);
+    }
+  }, [products.length]);
 
   useEffect(() => {
     try {
@@ -1441,6 +1482,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const resetProductsToInitial = () => {
+    setProducts(INITIAL_PRODUCTS);
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_products', JSON.stringify(INITIAL_PRODUCTS));
+    logAction('Restauração de Catálogo', 'product', 'all', 'Catálogo de produtos restaurado para os itens padrão da Raon System.');
+  };
+
   const buyProduct = (
     productId: string,
     cpf: string,
@@ -1619,6 +1666,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateProduct,
         deleteProduct,
         adjustStock,
+        resetProductsToInitial,
         buyProduct,
         updateSettings,
         resetAllData,

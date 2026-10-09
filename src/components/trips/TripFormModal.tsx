@@ -24,9 +24,9 @@ const CATEGORIES: TripCategory[] = [
 ];
 
 const PRESET_IMAGES = [
-  { label: 'Maragogi e Praias', url: '/src/assets/images/trip_beach_maragogi_1791434573087.jpg' },
-  { label: 'Histórico & Cultural', url: '/src/assets/images/trip_cultural_colonial_1791434591937.jpg' },
-  { label: 'Cachoeira & Ecoturismo', url: '/src/assets/images/trip_adventure_waterfall_1791434600106.jpg' },
+  { label: 'Maragogi e Praias', url: '/images/trips/maragogi.jpg' },
+  { label: 'Histórico & Cultural', url: '/images/trips/colonial.jpg' },
+  { label: 'Cachoeira & Ecoturismo', url: '/images/trips/aventura.jpg' },
 ];
 
 export const TripFormModal: React.FC<TripFormModalProps> = ({
