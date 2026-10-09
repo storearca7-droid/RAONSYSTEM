@@ -233,7 +233,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
 
   const handleShareWhatsApp = () => {
     const url = `${window.location.origin}${window.location.pathname}?portal=${trip.slug}`;
-    const text = `Acesse o Portal do Viajante da Dinho Tour para a viagem ${trip.name} com seu CPF:\n${url}`;
+    const text = `Acesse o Portal do Viajante da Raon System para a viagem ${trip.name} com seu CPF:\n${url}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -649,7 +649,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                     <p className="text-xs text-slate-500">
                       {activeSession
                         ? `Conferência ativa agora: "${activeSession.title}" (${activeSession.transportType})`
-                        : 'Confirme seu embarque oficial para que o guia e a equipe Dinho Tour acompanhem em tempo real.'}
+                        : 'Confirme seu embarque oficial para que o guia e a equipe Raon System acompanhem em tempo real.'}
                     </p>
                   </div>
 
@@ -684,7 +684,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                     <p className="text-xs sm:text-sm text-emerald-800 max-w-md mx-auto">
                       {activeSession
                         ? `Você já deu OK nesta conferência ("${activeSession.title}"). O responsável já visualizou sua presença em tempo real no painel administrativo.`
-                        : 'Você já deu OK de embarque neste transporte. A equipe da Dinho Tour já registrou sua presença na lista oficial em tempo real.'}
+                        : 'Você já deu OK de embarque neste transporte. A equipe da Raon System já registrou sua presença na lista oficial em tempo real.'}
                     </p>
                     {passengerBoardingTime && (
                       <span className="inline-block text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-xl">
@@ -703,7 +703,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                       </div>
                       <p className="text-xs text-amber-900 leading-relaxed">
                         Ao entrar no {activeSession ? activeSession.transportType : 'ônibus ou avião'}, clique no botão verde abaixo.
-                        O responsável da Dinho Tour receberá a confirmação instantaneamente no celular dele.
+                        O responsável da Raon System receberá a confirmação instantaneamente no celular dele.
                       </p>
                     </div>
 
@@ -826,7 +826,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                         Tudo Certo! Seu pacote está 100% quitado.
                       </h4>
                       <p className="text-xs text-emerald-800 mt-0.5">
-                        Não há valores pendentes para esta viagem. Sua vaga está garantida e confirmada com a Dinho Tour.
+                        Não há valores pendentes para esta viagem. Sua vaga está garantida e confirmada com a Raon System.
                       </p>
                     </div>
                   </div>
@@ -908,7 +908,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                   <div className="rounded-2xl border-2 border-orange-200 bg-orange-50/60 p-5 sm:p-6 space-y-4">
                     <div className="flex items-center gap-2 text-orange-950 font-bold text-sm">
                       <QrCode className="h-5 w-5 text-orange-600" />
-                      <span>Pague o Saldo via Chave PIX da Dinho Tour</span>
+                      <span>Pague o Saldo via Chave PIX da Raon System</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -941,7 +941,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                       <a
                         href={buildWhatsAppLink(
                           settings.whatsapp,
-                          `Olá equipe Dinho Tour! Segue comprovante do pagamento restante de ${formatBRL(remainingBalance)} para a viagem "${trip.name}" do passageiro ${searchedTraveler.fullName} (CPF: ${searchedTraveler.cpf}).`
+                          `Olá equipe Raon System! Segue comprovante do pagamento restante de ${formatBRL(remainingBalance)} para a viagem "${trip.name}" do passageiro ${searchedTraveler.fullName} (CPF: ${searchedTraveler.cpf}).`
                         )}
                         target="_blank"
                         rel="noreferrer"
@@ -1204,7 +1204,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                     Avisos & Comunicados Oficiais
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Mensagens emitidas pela Dinho Tour em tempo real para os passageiros desta viagem.
+                    Mensagens emitidas pela Raon System em tempo real para os passageiros desta viagem.
                   </p>
                 </div>
 
@@ -1407,7 +1407,7 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
           <a
             href={buildWhatsAppLink(
               settings.whatsapp,
-              `Olá equipe Dinho Tour, preciso de suporte sobre minha viagem para ${trip.name}:`
+              `Olá equipe Raon System, preciso de suporte sobre minha viagem para ${trip.name}:`
             )}
             target="_blank"
             rel="noreferrer"

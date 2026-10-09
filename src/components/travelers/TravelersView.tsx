@@ -143,7 +143,7 @@ export const TravelersView: React.FC = () => {
                         <span>{formatPhoneBR(t.phone)}</span>
                         {t.phone && (
                           <a
-                            href={buildWhatsAppLink(t.phone, `Olá ${t.fullName}, equipe Dinho Tour falando:`)}
+                            href={buildWhatsAppLink(t.phone, `Olá ${t.fullName}, equipe Raon System falando:`)}
                             target="_blank"
                             rel="noreferrer"
                             className="rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 hover:bg-emerald-100"

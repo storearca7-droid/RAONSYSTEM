@@ -154,7 +154,7 @@ export const SettingsView: React.FC = () => {
         <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
           <Building className="h-5 w-5 text-orange-600" />
           <h3 className="font-bold text-base text-slate-900">
-            Identidade Oficial da Dinho Tour
+            Identidade Oficial da Raon System
           </h3>
         </div>
 
@@ -162,14 +162,14 @@ export const SettingsView: React.FC = () => {
           {/* Logo Upload Section */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-2">
-              Logo Oficial da Dinho Tour
+              Logo Oficial da Raon System
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-xs flex items-center justify-center">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
-                    alt="Logo Dinho Tour"
+                    alt="Logo Raon System"
                     className="h-full w-full object-cover"
                     referrerPolicy="no-referrer"
                     onError={(e) => {
@@ -177,7 +177,7 @@ export const SettingsView: React.FC = () => {
                     }}
                   />
                 ) : (
-                  <span className="font-extrabold text-orange-600 text-xl">DT</span>
+                  <span className="font-extrabold text-orange-600 text-xl">RS</span>
                 )}
               </div>
 
@@ -420,7 +420,7 @@ export const SettingsView: React.FC = () => {
             {supabaseStatus.message}
           </p>
           <p>
-            O Dinho Tour funciona de forma 100% autônoma no navegador guardando todos os dados
+            O Raon System funciona de forma 100% autônoma no navegador guardando todos os dados
             com segurança referencial e sem perder nada entre recargas. Para sincronizar em tempo
             real entre múltiplos dispositivos ou armazenar arquivos no bucket do Supabase, basta
             informar a URL e a Anon Key do seu projeto Supabase abaixo.
@@ -527,7 +527,7 @@ export const SettingsView: React.FC = () => {
 
           <button
             onClick={() => {
-              if (confirm('Deseja realmente restaurar os dados de fábrica? Essa ação substituirá os cadastros atuais pelos dados de demonstração da Dinho Tour.')) {
+              if (confirm('Deseja realmente restaurar os dados de fábrica? Essa ação substituirá os cadastros atuais pelos dados de demonstração da Raon System.')) {
                 resetAllData();
               }
             }}

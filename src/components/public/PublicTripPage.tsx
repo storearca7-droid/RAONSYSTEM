@@ -148,7 +148,7 @@ export const PublicTripPage: React.FC<PublicTripPageProps> = ({ slug, onBackToAd
     if (navigator.share) {
       navigator.share({
         title: trip.name,
-        text: `Participe da viagem para ${trip.destination} com a Dinho Tour!`,
+        text: `Participe da viagem para ${trip.destination} com a Raon System!`,
         url: window.location.href,
       });
     } else {
@@ -477,7 +477,7 @@ export const PublicTripPage: React.FC<PublicTripPageProps> = ({ slug, onBackToAd
               <p className="text-xs sm:text-sm text-slate-500">
                 {occ.isFull
                   ? 'Esta viagem atingiu a capacidade máxima. Inscreva-se para ser chamado em caso de desistência.'
-                  : 'Preencha seus dados para reservar sua vaga com a Dinho Tour'}
+                  : 'Preencha seus dados para reservar sua vaga com a Raon System'}
               </p>
             </div>
 
@@ -508,7 +508,7 @@ export const PublicTripPage: React.FC<PublicTripPageProps> = ({ slug, onBackToAd
               {/* Agency Payment Details */}
               <div className="max-w-md mx-auto rounded-2xl border border-emerald-200 bg-white p-5 text-left text-xs space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <span className="font-bold text-slate-900">Dados da Dinho Tour para Depósito / Pix:</span>
+                  <span className="font-bold text-slate-900">Dados da Raon System para Depósito / Pix:</span>
                   <span className="text-[11px] font-semibold text-emerald-700">Chave {settings.pixKeyType}</span>
                 </div>
                 <div className="font-mono bg-slate-50 p-2.5 rounded-xl font-bold text-slate-900 select-all text-center">
@@ -703,7 +703,7 @@ export const PublicTripPage: React.FC<PublicTripPageProps> = ({ slug, onBackToAd
               {/* Submit CTA Button */}
               <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <p className="text-[11px] text-slate-400">
-                  Ao clicar em enviar, você concorda com os termos de reserva da Dinho Tour.
+                  Ao clicar em enviar, você concorda com os termos de reserva da Raon System.
                 </p>
 
                 <button

@@ -76,7 +76,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#F6F8FC]">
-      {/* Sidebar with exact 7 menus and Dinho Tour branding */}
+      {/* Sidebar with menus and Raon System branding */}
       <Sidebar
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}

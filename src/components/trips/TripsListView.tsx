@@ -76,7 +76,7 @@ export const TripsListView: React.FC<TripsListViewProps> = ({
 
   const handleShareWhatsApp = (trip: Trip) => {
     const url = `${window.location.origin}${window.location.pathname}?viagem=${trip.slug}`;
-    const message = `Olá! Confira nossa viagem para *${trip.name}* com a Dinho Tour!\nDatas: ${formatDateRangeBR(
+    const message = `Olá! Confira nossa viagem para *${trip.name}* com a Raon System!\nDatas: ${formatDateRangeBR(
       trip.departureDate,
       trip.returnDate
     )}\nValor: ${formatBRL(trip.pricePerPerson)}\nGaranta sua vaga no link:\n${url}`;

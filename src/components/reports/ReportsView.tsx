@@ -194,7 +194,7 @@ export const ReportsView: React.FC = () => {
           <div className="text-left sm:text-right text-xs text-slate-500">
             <div>Emissão: {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
             <div>CNPJ: {settings.cnpj}</div>
-            <div>Agência Dinho Tour</div>
+            <div>Agência Raon System</div>
           </div>
         </div>
 
@@ -378,10 +378,10 @@ export const ReportsView: React.FC = () => {
         {/* Footer sign */}
         <div className="pt-8 border-t border-slate-200 flex justify-between items-end text-[11px] text-slate-400">
           <div>
-            Relatório gerado exclusivamente para a administração da Dinho Tour.
+            Relatório gerado exclusivamente para a administração da Raon System.
           </div>
           <div className="text-right">
-            Dinho Tour — Gestão de Viagens
+            Raon System — Gestão de Viagens
           </div>
         </div>
       </div>

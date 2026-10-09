@@ -78,7 +78,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenNewTripModal
 
   const handleShareWhatsApp = (trip: typeof trips[0]) => {
     const url = `${window.location.origin}${window.location.pathname}?viagem=${trip.slug}`;
-    const message = `Olá! Confira nossa viagem para *${trip.name}* com a Dinho Tour!\nDatas: ${formatDateRangeBR(
+    const message = `Olá! Confira nossa viagem para *${trip.name}* com a Raon System!\nDatas: ${formatDateRangeBR(
       trip.departureDate,
       trip.returnDate
     )}\nValor: ${formatBRL(trip.pricePerPerson)}\nGaranta sua vaga no link:\n${url}`;
@@ -298,7 +298,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenNewTripModal
               Nenhuma viagem cadastrada ainda
             </h3>
             <p className="mt-1 text-xs text-slate-500">
-              Comece cadastrando sua primeira excursão ou roteiro turístico para a Dinho Tour.
+              Comece cadastrando sua primeira excursão ou roteiro turístico para a Raon System.
             </p>
             <button
               onClick={onOpenNewTripModal}

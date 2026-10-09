@@ -186,7 +186,7 @@ export const PartnersView: React.FC = () => {
                   <a
                     href={buildWhatsAppLink(
                       p.whatsapp || p.phone,
-                      `Olá ${p.responsibleName}, contato da Dinho Tour:`
+                      `Olá ${p.responsibleName}, contato da Raon System:`
                     )}
                     target="_blank"
                     rel="noreferrer"

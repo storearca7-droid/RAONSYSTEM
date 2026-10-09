@@ -18,6 +18,7 @@ import {
   TripChecklistItem,
   TripNotice,
   TripCompanionGroup,
+  Product,
 } from '../types';
 import {
   INITIAL_SETTINGS,
@@ -29,8 +30,9 @@ import {
   INITIAL_PAYMENTS,
   INITIAL_EXPENSES,
   INITIAL_AUDIT_LOGS,
+  INITIAL_PRODUCTS,
 } from '../lib/initialData';
-import { generateId, slugify, calculateTripOccupancy } from '../lib/utils';
+import { generateId, slugify, calculateTripOccupancy, formatBRL, buildWhatsAppLink } from '../lib/utils';
 import { testSupabaseConnection } from '../lib/supabase';
 
 export type ActiveMenu =
@@ -39,6 +41,7 @@ export type ActiveMenu =
   | 'travelers'
   | 'financial'
   | 'partners'
+  | 'products'
   | 'reports'
   | 'settings';
 
@@ -174,6 +177,19 @@ interface AppContextType {
   updatePartner: (id: string, partner: Partial<Partner>) => void;
   deletePartner: (id: string) => { success: boolean; message?: string };
 
+  // Products
+  products: Product[];
+  createProduct: (product: Omit<Product, 'id' | 'createdAt'>) => Product;
+  updateProduct: (id: string, product: Partial<Product>) => void;
+  deleteProduct: (id: string) => void;
+  adjustStock: (id: string, delta: number) => void;
+  buyProduct: (
+    productId: string,
+    cpf: string,
+    quantity?: number,
+    deliveryOption?: string
+  ) => { success: boolean; whatsappUrl: string; message: string };
+
   // Settings & Backups
   updateSettings: (newSettings: Partial<AgencySettings>) => void;
   resetAllData: () => void;
@@ -194,7 +210,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Auth State
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('dinho_tour_user');
-    return saved ? JSON.parse(saved) : INITIAL_USER;
+    if (saved) {
+      try {
+        const u = JSON.parse(saved);
+        if (u.name === 'Dinho Oliveira' || !u.name) {
+          u.name = 'Raon admin';
+          u.email = 'somosraon@gmail.com';
+        }
+        return u;
+      } catch {}
+    }
+    return INITIAL_USER;
   });
   const isLoggedIn = !!currentUser;
 
@@ -253,6 +279,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_products');
+      return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    } catch {
+      return INITIAL_PRODUCTS;
+    }
+  });
+
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_audit');
@@ -265,7 +300,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [settings, setSettings] = useState<AgencySettings>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY + '_settings');
-      return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
+      if (saved) {
+        const s = JSON.parse(saved);
+        if (s.agencyName?.includes('DINHO TOUR')) {
+          s.agencyName = 'Raon System — Gestão de Viagens';
+        }
+        return s;
+      }
+      return INITIAL_SETTINGS;
     } catch {
       return INITIAL_SETTINGS;
     }
@@ -330,6 +372,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     try {
+      localStorage.setItem(LOCAL_STORAGE_KEY + '_products', JSON.stringify(products));
+    } catch (e) { console.error(e); }
+  }, [products]);
+
+  useEffect(() => {
+    try {
       localStorage.setItem(LOCAL_STORAGE_KEY + '_audit', JSON.stringify(auditLogs));
     } catch (e) { console.error(e); }
   }, [auditLogs]);
@@ -374,7 +422,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       entityType,
       entityId,
       details,
-      user: currentUser?.name || 'Sistema Dinho Tour',
+      user: currentUser?.name || 'Sistema Raon System',
     };
     setAuditLogs(prev => [newLog, ...prev.slice(0, 499)]); // keep latest 500
   };
@@ -660,7 +708,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       assignedStatus === 'waitlist'
         ? `A viagem está lotada (${trip.capacity} vagas). A inscrição foi incluída com sucesso na LISTA DE ESPERA.`
         : options.isPublic
-        ? 'Inscrição recebida com sucesso! A equipe da Dinho Tour analisará a solicitação e confirmará sua reserva.'
+        ? 'Inscrição recebida com sucesso! A equipe da Raon System analisará a solicitação e confirmará sua reserva.'
         : `Viajante inscrito com sucesso com status "${assignedStatus === 'confirmed' ? 'Confirmado' : 'Aguardando Aprovação'}".`;
 
     logAction(
@@ -777,7 +825,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!traveler) {
       return {
         success: false,
-        message: 'CPF não encontrado na lista de passageiros desta viagem. Verifique os números digitados ou fale com a Dinho Tour.',
+        message: 'CPF não encontrado na lista de passageiros desta viagem. Verifique os números digitados ou fale com a Raon System.',
       };
     }
 
@@ -1355,6 +1403,102 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return { success: true };
   };
 
+  // PRODUCTS
+  const createProduct = (productData: Omit<Product, 'id' | 'createdAt'>): Product => {
+    const id = generateId();
+    const newProduct: Product = {
+      ...productData,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    setProducts(prev => [newProduct, ...prev]);
+    logAction('Cadastro de Produto', 'product', id, `Produto "${newProduct.name}" cadastrado com estoque ${newProduct.stock}.`);
+    return newProduct;
+  };
+
+  const updateProduct = (id: string, productData: Partial<Product>) => {
+    setProducts(prev =>
+      prev.map(p => (p.id === id ? { ...p, ...productData } : p))
+    );
+    logAction('Edição de Produto', 'product', id, `Produto ${id} atualizado.`);
+  };
+
+  const deleteProduct = (id: string) => {
+    const prod = products.find(p => p.id === id);
+    setProducts(prev => prev.filter(p => p.id !== id));
+    logAction('Exclusão de Produto', 'product', id, `Produto "${prod?.name || id}" excluído.`);
+  };
+
+  const adjustStock = (id: string, delta: number) => {
+    setProducts(prev =>
+      prev.map(p => {
+        if (p.id === id) {
+          const newStock = Math.max(0, p.stock + delta);
+          return { ...p, stock: newStock };
+        }
+        return p;
+      })
+    );
+  };
+
+  const buyProduct = (
+    productId: string,
+    cpf: string,
+    quantity: number = 1,
+    deliveryOption?: string
+  ): { success: boolean; whatsappUrl: string; message: string } => {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) {
+      return { success: false, whatsappUrl: '', message: 'Produto não encontrado.' };
+    }
+    if (prod.stock < quantity) {
+      return { success: false, whatsappUrl: '', message: `Estoque insuficiente! Restam apenas ${prod.stock} unidade(s) disponíveis.` };
+    }
+
+    // Decrement stock immediately
+    adjustStock(productId, -quantity);
+
+    // Look up traveler by CPF if registered
+    const cleanCpf = cpf.replace(/\D/g, '');
+    const traveler = travelers.find(t => t.cpf.replace(/\D/g, '') === cleanCpf);
+    const travelerName = traveler?.fullName || 'Cliente da Agência';
+    const totalAmount = prod.price * quantity;
+
+    const formattedCpf = cleanCpf.length === 11
+      ? cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+      : cpf;
+
+    const messageLines = [
+      `Olá Raon System! Gostaria de comprar o produto da agência:`,
+      ``,
+      `🛍️ *Produto:* ${prod.name}`,
+      `🔢 *Quantidade:* ${quantity} unidade(s)`,
+      `💰 *Valor Unitário:* ${formatBRL(prod.price)}`,
+      `💵 *Valor Total:* ${formatBRL(totalAmount)}`,
+      `👤 *Cliente:* ${travelerName}`,
+      `📄 *CPF:* ${formattedCpf}`,
+      deliveryOption ? `📍 *Entrega:* ${deliveryOption}` : `📍 *Entrega:* Durante o embarque / na viagem`,
+      ``,
+      `Por favor, me envie a chave PIX ou dados de pagamento para finalizar o pedido. Obrigado!`,
+    ];
+
+    const message = messageLines.join('\n');
+    const whatsappUrl = buildWhatsAppLink(settings.whatsapp, message);
+
+    logAction(
+      'Venda de Produto',
+      'product',
+      productId,
+      `Pedido de ${quantity}x "${prod.name}" gerado para CPF ${formattedCpf} (${formatBRL(totalAmount)}). WhatsApp acionado.`
+    );
+
+    return {
+      success: true,
+      whatsappUrl,
+      message: `Pedido confirmado! Redirecionando para o WhatsApp da agência...`,
+    };
+  };
+
   // SETTINGS & BACKUPS
   const updateSettings = (newSettings: Partial<AgencySettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
@@ -1376,7 +1520,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const exportDatabaseJson = (): string => {
     const backup = {
-      agency: 'Dinho Tour',
+      agency: 'Raon System',
       exportDate: new Date().toISOString(),
       trips,
       travelers,
@@ -1394,7 +1538,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const data = JSON.parse(json);
       if (!data.trips || !data.travelers || !data.registrations) {
-        return { success: false, message: 'Arquivo JSON inválido. Estrutura não compatível com o Dinho Tour.' };
+        return { success: false, message: 'Arquivo JSON inválido. Estrutura não compatível com o Raon System.' };
       }
       setTrips(data.trips);
       setTravelers(data.travelers);
@@ -1470,6 +1614,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createPartner,
         updatePartner,
         deletePartner,
+        products,
+        createProduct,
+        updateProduct,
+        deleteProduct,
+        adjustStock,
+        buyProduct,
         updateSettings,
         resetAllData,
         exportDatabaseJson,

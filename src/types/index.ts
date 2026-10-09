@@ -140,7 +140,7 @@ export interface Trip {
   departureLocation: string; // "Praça Central de Embarque"
   arrivalLocation: string; // "Hotel / Pousada Destino"
   capacity: number; // Vagas totais
-  responsible: string; // "Dinho / Equipe"
+  responsible: string; // "Raon admin / Equipe"
   pricePerPerson: number; // BRL
   notes?: string;
   status: TripStatus;
@@ -266,7 +266,7 @@ export interface AuditLog {
   id: string;
   timestamp: string;
   action: string;
-  entityType: 'trip' | 'traveler' | 'registration' | 'payment' | 'expense' | 'partner' | 'setting';
+  entityType: 'trip' | 'traveler' | 'registration' | 'payment' | 'expense' | 'partner' | 'setting' | 'product';
   entityId: string;
   details: string;
   user: string;
@@ -300,3 +300,25 @@ export interface UserProfile {
   role: 'admin' | 'operador';
   avatar?: string;
 }
+
+export type ProductCategory =
+  | 'Vestuário'
+  | 'Eletrônicos'
+  | 'Acessórios'
+  | 'Utilidades'
+  | 'Outro';
+
+export interface Product {
+  id: string;
+  name: string;
+  category: ProductCategory;
+  description: string;
+  price: number;
+  stock: number;
+  imageUrl: string;
+  badge?: string;
+  tripId?: string;
+  availableDuringTrip: boolean;
+  createdAt: string;
+}
+

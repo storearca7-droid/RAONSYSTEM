@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS public.trips (
     departure_location TEXT NOT NULL,
     arrival_location TEXT NOT NULL,
     capacity INTEGER NOT NULL DEFAULT 40,
-    responsible TEXT NOT NULL DEFAULT 'Dinho Tour',
+    responsible TEXT NOT NULL DEFAULT 'Raon System',
     price_per_person NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
     notes TEXT,
     status TEXT NOT NULL DEFAULT 'publicada', -- 'rascunho', 'publicada', 'encerrada', 'cancelada'
@@ -208,13 +208,13 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
     entity_type TEXT NOT NULL,
     entity_id TEXT NOT NULL,
     details TEXT,
-    user_name TEXT NOT NULL DEFAULT 'Equipe Dinho Tour'
+    user_name TEXT NOT NULL DEFAULT 'Equipe Raon System'
 );
 
 -- 11. Tabela de Configurações da Agência (app_settings)
 CREATE TABLE IF NOT EXISTS public.app_settings (
     id TEXT PRIMARY KEY DEFAULT 'dinho_main_config',
-    agency_name TEXT NOT NULL DEFAULT 'DINHO TOUR',
+    agency_name TEXT NOT NULL DEFAULT 'RAON SYSTEM',
     cnpj TEXT,
     phone TEXT,
     whatsapp TEXT,

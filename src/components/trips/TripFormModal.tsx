@@ -52,7 +52,7 @@ export const TripFormModal: React.FC<TripFormModalProps> = ({
   const [returnTime, setReturnTime] = useState('14:00');
   const [returnArrivalLocation, setReturnArrivalLocation] = useState('');
   const [capacity, setCapacity] = useState(40);
-  const [responsible, setResponsible] = useState('Dinho Oliveira');
+  const [responsible, setResponsible] = useState('Raon admin');
   const [pricePerPerson, setPricePerPerson] = useState(1200);
   const [notes, setNotes] = useState('');
   const [status, setStatus] = useState<TripStatus>('publicada');
@@ -76,7 +76,7 @@ export const TripFormModal: React.FC<TripFormModalProps> = ({
       setReturnTime(initialData.returnTime || '14:00');
       setReturnArrivalLocation(initialData.returnArrivalLocation || '');
       setCapacity(initialData.capacity);
-      setResponsible(initialData.responsible || 'Dinho Oliveira');
+      setResponsible(initialData.responsible || 'Raon admin');
       setPricePerPerson(initialData.pricePerPerson);
       setNotes(initialData.notes || '');
       setStatus(initialData.status);
@@ -90,7 +90,7 @@ export const TripFormModal: React.FC<TripFormModalProps> = ({
       setDepartureDate('');
       setReturnDate('');
       setDepartureTime('06:00');
-      setDepartureLocation('Posto Central / Sede Dinho Tour');
+      setDepartureLocation('Posto Central / Sede Raon System');
       setArrivalLocation('Hotel ou Pousada no Destino');
       setTransportType('Ônibus Leito Turismo com ar-condicionado');
       setFlightNumber('');
@@ -98,7 +98,7 @@ export const TripFormModal: React.FC<TripFormModalProps> = ({
       setReturnTime('14:00');
       setReturnArrivalLocation('');
       setCapacity(40);
-      setResponsible('Dinho Oliveira');
+      setResponsible('Raon admin');
       setPricePerPerson(1200);
       setNotes('');
       setStatus('publicada');

@@ -129,7 +129,7 @@ export const TripBoardingTab: React.FC<TripBoardingTabProps> = ({ trip }) => {
 
   const handleShareCheckinWhatsApp = () => {
     const sessionName = currentSession ? ` para a conferência de *${currentSession.title}* (${currentSession.transportType})` : '';
-    const msg = `Olá viajante da Dinho Tour! Acesse o Portal do Viajante${sessionName} para *${trip.name}* com seu CPF para conferir horários, sua poltrona e dar o OK de presença no transporte:\n${checkinUrl}`;
+    const msg = `Olá viajante da Raon System! Acesse o Portal do Viajante${sessionName} para *${trip.name}* com seu CPF para conferir horários, sua poltrona e dar o OK de presença no transporte:\n${checkinUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
@@ -566,7 +566,7 @@ export const TripBoardingTab: React.FC<TripBoardingTabProps> = ({ trip }) => {
                           <a
                             href={buildWhatsAppLink(
                               traveler.phone,
-                              `Olá ${traveler.fullName}, a equipe Dinho Tour está aguardando você para o embarque (${currentSession ? currentSession.title : trip.departureLocation})! Já está no transporte?`
+                              `Olá ${traveler.fullName}, a equipe Raon System está aguardando você para o embarque (${currentSession ? currentSession.title : trip.departureLocation})! Já está no transporte?`
                             )}
                             target="_blank"
                             rel="noreferrer"

@@ -150,7 +150,7 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
 
   const handleShareWhatsApp = () => {
     const url = `${window.location.origin}${window.location.pathname}?viagem=${trip.slug}`;
-    const msg = `Olá! Confira nossa viagem para *${trip.name}* com a Dinho Tour!\nDatas: ${formatDateRangeBR(
+    const msg = `Olá! Confira nossa viagem para *${trip.name}* com a Raon System!\nDatas: ${formatDateRangeBR(
       trip.departureDate,
       trip.returnDate
     )}\nValor: ${formatBRL(trip.pricePerPerson)}\nGaranta sua vaga no link:\n${url}`;
@@ -166,7 +166,7 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
 
   const handleSharePortalWhatsApp = () => {
     const url = `${window.location.origin}${window.location.pathname}?portal=${trip.slug}`;
-    const msg = `Olá viajante da Dinho Tour! Acesse seu Portal Exclusivo da viagem para *${trip.name}* entrando com seu CPF: consulte horários de saída, voo/ônibus, roteiro dia a dia, se falta pagar e confirme sua presença no embarque:\n${url}`;
+    const msg = `Olá viajante da Raon System! Acesse seu Portal Exclusivo da viagem para *${trip.name}* entrando com seu CPF: consulte horários de saída, voo/ônibus, roteiro dia a dia, se falta pagar e confirme sua presença no embarque:\n${url}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
   };
 

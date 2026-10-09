@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 
 export const LoginModal: React.FC = () => {
   const { login, settings } = useApp();
-  const [email, setEmail] = useState('dinho@dinhotour.com.br');
+  const [email, setEmail] = useState('somosraon@gmail.com');
   const [password, setPassword] = useState('••••••••');
   const [error, setError] = useState('');
 
@@ -26,16 +26,16 @@ export const LoginModal: React.FC = () => {
         {/* Brand Lockup */}
         <div className="text-center space-y-2">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-600 font-black text-white text-xl shadow-md">
-            DT
+            RS
           </div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-            DINHO TOUR
+            RAON SYSTEM
           </h2>
           <p className="text-xs font-semibold text-orange-600 uppercase tracking-wider">
             Acesso Restrito à Equipe
           </p>
           <p className="text-xs text-slate-500">
-            Painel interno de gestão de viagens, viajantes e financeiro.
+            Painel interno de gestão de viagens, viajantes, produtos e financeiro.
           </p>
         </div>
 
@@ -89,7 +89,7 @@ export const LoginModal: React.FC = () => {
 
         <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
           <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-          <span>Acesso criptografado e seguro Dinho Tour</span>
+          <span>Acesso criptografado e seguro Raon System</span>
         </div>
       </div>
     </div>

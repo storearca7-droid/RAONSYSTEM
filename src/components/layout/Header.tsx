@@ -24,12 +24,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenNewTripM
         return 'Controle Financeiro Geral';
       case 'partners':
         return 'Parceiros & Fornecedores';
+      case 'products':
+        return 'Produtos & Loja da Agência';
       case 'reports':
         return 'Relatórios & Exportações';
       case 'settings':
         return 'Configurações da Agência';
       default:
-        return 'Dinho Tour';
+        return 'Raon System';
     }
   };
 

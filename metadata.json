@@ -1,6 +1,6 @@
 {
-  "name": "DINHO TOUR — Gestão de Viagens",
-  "description": "Sistema exclusivo de gestão de viagens, roteiros, viajantes, inscrições, pagamentos e despesas para a agência Dinho Tour.",
+  "name": "Raon System — Gestão de Viagens",
+  "description": "Sistema exclusivo de gestão de viagens, roteiros, viajantes, produtos, inscrições, pagamentos e despesas para Raon System.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

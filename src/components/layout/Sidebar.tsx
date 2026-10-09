@@ -5,6 +5,7 @@ import {
   Users,
   Wallet,
   Handshake,
+  ShoppingBag,
   BarChart3,
   Settings,
   LogOut,
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { id: 'travelers', label: 'Viajantes', icon: Users },
     { id: 'financial', label: 'Financeiro', icon: Wallet },
     { id: 'partners', label: 'Parceiros', icon: Handshake },
+    { id: 'products', label: 'Produtos', icon: ShoppingBag },
     { id: 'reports', label: 'Relatórios', icon: BarChart3 },
     { id: 'settings', label: 'Configurações', icon: Settings },
   ];
@@ -63,23 +65,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Brand Area */}
         <div className="flex h-20 items-center gap-3 border-b border-slate-800/80 px-6">
           <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-600 shadow-md">
-            {settings.logoUrl ? (
-              <img
-                src={settings.logoUrl}
-                alt="Logo Dinho Tour"
-                className="h-full w-full object-cover"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-            ) : (
-              <span className="font-extrabold text-white text-lg tracking-wider">DT</span>
-            )}
+            <span className="font-extrabold text-white text-lg tracking-wider">RS</span>
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-base font-bold text-white tracking-tight leading-tight truncate">
-              DINHO TOUR
+              RAON SYSTEM
             </h1>
             <p className="text-[11px] font-medium text-orange-400 tracking-wide uppercase truncate">
               Gestão de Viagens
@@ -140,14 +130,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="flex items-center justify-between rounded-xl bg-slate-900/80 p-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800 font-semibold text-slate-200 text-sm">
-                {currentUser?.name?.charAt(0) || 'D'}
+                {currentUser?.name?.charAt(0) || 'R'}
               </div>
               <div className="min-w-0">
                 <p className="truncate text-xs font-semibold text-white">
-                  {currentUser?.name || 'Dinho Oliveira'}
+                  {currentUser?.name || 'Raon admin'}
                 </p>
                 <p className="truncate text-[10px] text-slate-400">
-                  {currentUser?.role === 'admin' ? 'Administrador' : 'Equipe Dinho'}
+                  {currentUser?.role === 'admin' ? 'Administrador' : 'Equipe Raon'}
                 </p>
               </div>
             </div>
