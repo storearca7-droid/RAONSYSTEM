@@ -361,7 +361,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setPublicCheckinSlug(portalSlug);
       return;
     }
-    const tripSlug = params.get('viagem') || params.get('public');
+    const tripSlug =
+      params.get('viagem') ||
+      params.get('public') ||
+      params.get('adesao') ||
+      params.get('cadastro') ||
+      params.get('reservar') ||
+      params.get('quero-viajar') ||
+      params.get('link');
     if (tripSlug) {
       setPublicTripSlug(tripSlug);
     }

@@ -33,6 +33,7 @@ export type PaymentMethod =
   | 'Cartão de Débito'
   | 'Transferência Bancária'
   | 'Boleto'
+  | 'Negociar com Operador'
   | 'Outro';
 
 export type ExpenseCategory =

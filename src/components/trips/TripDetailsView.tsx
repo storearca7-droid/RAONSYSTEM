@@ -28,6 +28,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { SendTripLinkModal } from './SendTripLinkModal';
 import {
   Trip,
   TripRegistration,
@@ -103,6 +104,7 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
   const [activeTab, setActiveTab] = useState<DetailsTab>('overview');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPortalLink, setCopiedPortalLink] = useState(false);
+  const [isSendLinkModalOpen, setIsSendLinkModalOpen] = useState(false);
 
   // Modals inside details
   const [isAddTravelerOpen, setIsAddTravelerOpen] = useState(false);
@@ -324,34 +326,34 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Acesso & Links do Portal do Viajante (com login CPF) */}
+          {/* Enviar Link da Viagem (Adesão, WhatsApp, QR Code) */}
+          <button
+            onClick={() => setIsSendLinkModalOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl bg-linear-to-r from-orange-600 to-amber-600 px-3.5 py-2 text-xs font-bold text-white hover:from-orange-500 hover:to-amber-500 shadow-sm transition-transform active:scale-95"
+            title="Enviar link da viagem com WhatsApp, QR Code, opções de pagamento e adesão"
+          >
+            <Share2 className="h-4 w-4" />
+            <span>Enviar Link da Viagem</span>
+          </button>
+
           <button
             onClick={() => setPublicCheckinSlug(trip.slug)}
-            className="flex items-center gap-1.5 rounded-xl bg-orange-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-orange-700 shadow-xs transition-colors"
+            className="flex items-center gap-1.5 rounded-xl border border-orange-200 bg-orange-50/70 px-3 py-2 text-xs font-bold text-orange-800 hover:bg-orange-100 transition-colors"
             title="Abrir o Portal do Viajante como os passageiros veem"
           >
-            <Bus className="h-4 w-4" />
+            <Bus className="h-4 w-4 text-orange-600" />
             <span>Portal do Viajante (CPF)</span>
           </button>
 
           <button
             onClick={handleCopyPortalLink}
-            className="flex items-center gap-1.5 rounded-xl border border-orange-200 bg-orange-50/70 px-3 py-2 text-xs font-bold text-orange-800 hover:bg-orange-100 transition-colors"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
             title="Copiar link direto para os passageiros acessarem com CPF"
           >
-            {copiedPortalLink ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4 text-orange-600" />}
-            <span>{copiedPortalLink ? 'Link Portal Copiado!' : 'Copiar Link do Viajante'}</span>
+            {copiedPortalLink ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4 text-slate-400" />}
+            <span>{copiedPortalLink ? 'Copiado!' : 'Copiar Link Portal'}</span>
           </button>
 
-          <button
-            onClick={handleSharePortalWhatsApp}
-            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors"
-            title="Disparar no WhatsApp dos viajantes com texto pronto"
-          >
-            <MessageCircle className="h-4 w-4" />
-            <span>Enviar no WhatsApp</span>
-          </button>
-
-          {/* Página Pública Geral de Inscrição */}
           <button
             onClick={() => setPublicTripSlug(trip.slug)}
             className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
@@ -546,6 +548,49 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
                   Exportar Lista (CSV)
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Link de Adesão e Inscrição para Clientes Banner */}
+          <div className="rounded-2xl border border-orange-200 bg-linear-to-r from-orange-50 via-amber-50 to-orange-50 p-5 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-600 text-white shadow-xs">
+                  <Share2 className="h-4 w-4" />
+                </span>
+                <h4 className="font-bold text-sm sm:text-base text-slate-900">
+                  Link de Adesão & Inscrição para Clientes
+                </h4>
+              </div>
+              <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
+                Envie este link para as pessoas se cadastrarem na viagem! O cliente clica no link, confere fotos e roteiro, e clica em <strong>"Quero Viajar"</strong> para preencher Nome, Sobrenome, CPF, WhatsApp e selecionar pagamento por <strong>Pix</strong>, <strong>Cartão de Crédito</strong>, <strong>Boleto</strong> ou <strong>Negociar com você</strong>.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsSendLinkModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-transform active:scale-95"
+              >
+                <Share2 className="h-4 w-4" />
+                <span>Enviar Link ao Cliente</span>
+              </button>
+
+              <button
+                onClick={handleCopyLink}
+                className="flex items-center gap-1.5 rounded-xl border border-orange-200 bg-white hover:bg-orange-50/50 px-3.5 py-2.5 text-xs font-bold text-orange-800 transition-colors"
+              >
+                {copiedLink ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4 text-orange-600" />}
+                <span>{copiedLink ? 'Copiado!' : 'Copiar Link'}</span>
+              </button>
+
+              <button
+                onClick={() => setPublicTripSlug(trip.slug)}
+                className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-700 transition-colors"
+              >
+                <ExternalLink className="h-4 w-4 text-slate-500" />
+                <span>Ver Página</span>
+              </button>
             </div>
           </div>
 
@@ -1577,6 +1622,14 @@ export const TripDetailsView: React.FC<TripDetailsViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Modal para Enviar Link da Viagem ao Cliente */}
+      <SendTripLinkModal
+        trip={trip}
+        isOpen={isSendLinkModalOpen}
+        onClose={() => setIsSendLinkModalOpen(false)}
+        onOpenPublicView={slug => setPublicTripSlug(slug)}
+      />
     </div>
   );
 };

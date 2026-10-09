@@ -13,9 +13,12 @@ import {
   Trash2,
   ExternalLink,
   Bus,
+  Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Trip, TripCategory, TripStatus } from '../../types';
+import { SendTripLinkModal } from './SendTripLinkModal';
 import {
   formatBRL,
   formatDateRangeBR,
@@ -50,6 +53,7 @@ export const TripsListView: React.FC<TripsListViewProps> = ({
   const [categoryFilter, setCategoryFilter] = useState<'all' | TripCategory>('all');
   const [copiedTripId, setCopiedTripId] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [sharingTrip, setSharingTrip] = useState<Trip | null>(null);
 
   const filteredTrips = trips.filter(trip => {
     const matchesSearch =
@@ -231,7 +235,59 @@ export const TripsListView: React.FC<TripsListViewProps> = ({
                         </button>
 
                         {openDropdownId === trip.id && (
-                          <div className="absolute right-0 top-7 z-20 w-40 rounded-xl border border-slate-200 bg-white py-1 shadow-lg text-xs text-slate-700">
+                          <div className="absolute right-0 top-7 z-20 w-52 rounded-xl border border-slate-200 bg-white py-1 shadow-xl text-xs text-slate-700">
+                            <button
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                setSharingTrip(trip);
+                              }}
+                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-orange-50 text-orange-600 font-bold"
+                            >
+                              <Share2 className="h-3.5 w-3.5" />
+                              <span>Enviar Link da Viagem</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                handleCopyLink(trip.slug, trip.id);
+                              }}
+                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700"
+                            >
+                              <Copy className="h-3.5 w-3.5 text-slate-400" />
+                              <span>Copiar Link de Adesão</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                setPublicTripSlug(trip.slug);
+                              }}
+                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
+                              <span>Ver como o Cliente Vê</span>
+                            </button>
+                            <div className="my-1 border-t border-slate-100" />
+                            <button
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                setPublicCheckinSlug(trip.slug);
+                              }}
+                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium"
+                            >
+                              <Bus className="h-3.5 w-3.5 text-orange-600" />
+                              <span>Portal do Viajante (CPF)</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setOpenDropdownId(null);
+                                handleCopyPortalLink(trip.slug, trip.id);
+                              }}
+                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-600"
+                            >
+                              <Copy className="h-3.5 w-3.5 text-slate-400" />
+                              <span>Copiar Link do Portal</span>
+                            </button>
+                            <div className="my-1 border-t border-slate-100" />
                             <button
                               onClick={() => {
                                 setOpenDropdownId(null);
@@ -252,37 +308,6 @@ export const TripsListView: React.FC<TripsListViewProps> = ({
                               <CopyPlus className="h-3.5 w-3.5 text-slate-500" />
                               <span>Duplicar</span>
                             </button>
-                            <button
-                              onClick={() => {
-                                setOpenDropdownId(null);
-                                setPublicCheckinSlug(trip.slug);
-                              }}
-                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-orange-50 text-orange-600 font-semibold"
-                            >
-                              <Bus className="h-3.5 w-3.5" />
-                              <span>Portal do Viajante (CPF)</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                setOpenDropdownId(null);
-                                handleCopyPortalLink(trip.slug, trip.id);
-                              }}
-                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700"
-                            >
-                              <Copy className="h-3.5 w-3.5 text-slate-400" />
-                              <span>Copiar Link do Viajante</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                setOpenDropdownId(null);
-                                setPublicTripSlug(trip.slug);
-                              }}
-                              className="flex w-full items-center gap-2 px-3 py-2 hover:bg-slate-50"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
-                              <span>Página de Vendas / Inscrição</span>
-                            </button>
-                            <div className="my-1 border-t border-slate-100" />
                             <button
                               onClick={() => {
                                 setOpenDropdownId(null);
@@ -357,47 +382,68 @@ export const TripsListView: React.FC<TripsListViewProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-auto pt-3 border-t border-slate-100 flex items-center gap-1.5">
+                  <div className="mt-auto pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    {/* Primary Share CTA */}
                     <button
-                      onClick={() => setSelectedTripId(trip.id)}
-                      className="flex-1 rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
-                    >
-                      Acessar Gestão
-                    </button>
-
-                    <button
-                      onClick={() => setPublicCheckinSlug(trip.slug)}
-                      title="Abrir Portal do Viajante (Login com CPF)"
-                      className="rounded-xl border border-orange-200 bg-orange-50 p-2 text-orange-600 hover:bg-orange-100 transition-colors"
-                    >
-                      <Bus className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      onClick={() => handleCopyPortalLink(trip.slug, trip.id)}
-                      title="Copiar link do Portal do Viajante (para enviar aos passageiros)"
-                      className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:border-orange-500 hover:text-orange-600 transition-colors"
-                    >
-                      {copiedTripId === `portal_${trip.id}` ? (
-                        <Check className="h-4 w-4 text-emerald-600" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() => handleShareWhatsApp(trip)}
-                      title="Compartilhar no WhatsApp"
-                      className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-colors"
+                      onClick={() => setSharingTrip(trip)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 px-3 py-2.5 text-xs font-bold text-white shadow-xs transition-transform active:scale-[0.99]"
                     >
                       <Share2 className="h-4 w-4" />
+                      <span>Enviar Link da Viagem (Quero Viajar & Pix)</span>
                     </button>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setSelectedTripId(trip.id)}
+                        className="flex-1 rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
+                      >
+                        Acessar Gestão
+                      </button>
+
+                      <button
+                        onClick={() => handleCopyLink(trip.slug, trip.id)}
+                        title="Copiar Link de Adesão e Vendas (para o cliente se cadastrar)"
+                        className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:border-orange-500 hover:text-orange-600 transition-colors"
+                      >
+                        {copiedTripId === trip.id ? (
+                          <Check className="h-4 w-4 text-emerald-600" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => setPublicTripSlug(trip.slug)}
+                        title="Visualizar Página do Cliente (Como o Viajante Vê)"
+                        className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:border-orange-500 hover:text-orange-600 transition-colors"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </button>
+
+                      <button
+                        onClick={() => setPublicCheckinSlug(trip.slug)}
+                        title="Abrir Portal do Viajante (Login com CPF)"
+                        className="rounded-xl border border-orange-200 bg-orange-50 p-2 text-orange-600 hover:bg-orange-100 transition-colors"
+                      >
+                        <Bus className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+
+      {/* Modal for Sharing Trip Link to Customers */}
+      {sharingTrip && (
+        <SendTripLinkModal
+          trip={sharingTrip}
+          isOpen={!!sharingTrip}
+          onClose={() => setSharingTrip(null)}
+          onOpenPublicView={slug => setPublicTripSlug(slug)}
+        />
       )}
     </div>
   );
