@@ -885,9 +885,14 @@ export const PublicTripPage: React.FC<PublicTripPageProps> = ({ slug, onBackToAd
 
                   {/* Birth Date */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Data de Nascimento
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Data de Nascimento
+                      </label>
+                      <span className="text-[10px] text-orange-600 font-medium">
+                        🎂 Presentes & descontos no aniversário
+                      </span>
+                    </div>
                     <input
                       type="date"
                       value={birthDate}

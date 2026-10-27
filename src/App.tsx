@@ -7,6 +7,7 @@ import { TripsListView } from './components/trips/TripsListView';
 import { TripFormModal } from './components/trips/TripFormModal';
 import { TripDetailsView } from './components/trips/TripDetailsView';
 import { TravelersView } from './components/travelers/TravelersView';
+import { BirthdaysView } from './components/birthdays/BirthdaysView';
 import { FinancialView } from './components/financial/FinancialView';
 import { PartnersView } from './components/partners/PartnersView';
 import { ProductsView } from './components/products/ProductsView';
@@ -112,6 +113,7 @@ const AppContent: React.FC = () => {
                   />
                 )}
                 {activeMenu === 'travelers' && <TravelersView />}
+                {activeMenu === 'birthdays' && <BirthdaysView />}
                 {activeMenu === 'financial' && <FinancialView />}
                 {activeMenu === 'partners' && <PartnersView />}
                 {activeMenu === 'products' && <ProductsView />}

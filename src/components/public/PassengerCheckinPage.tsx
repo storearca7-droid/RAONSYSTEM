@@ -27,6 +27,7 @@ import {
   UserCheck,
   Info,
   ChevronRight,
+  Cake,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -40,6 +41,7 @@ import {
   formatPhoneBR,
   buildWhatsAppLink,
 } from '../../lib/utils';
+import { getBirthdayInfo } from '../../lib/birthdays';
 import { Trip, Traveler, TripRegistration, BoardingStatus } from '../../types';
 
 interface PassengerCheckinPageProps {
@@ -265,11 +267,11 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-600 font-extrabold text-white text-base shadow-xs">
-              DT
+              RS
             </div>
             <div>
               <span className="text-sm font-bold text-slate-900 tracking-tight block leading-tight">
-                DINHO TOUR
+                {settings.agencyName || 'Raon System'}
               </span>
               <span className="text-[10px] text-orange-600 font-semibold uppercase tracking-wider block">
                 Portal Oficial do Viajante
@@ -535,6 +537,50 @@ export const PassengerCheckinPage: React.FC<PassengerCheckinPageProps> = ({
                   </button>
                 </div>
               </div>
+
+              {/* Birthday Greeting Banner if Today or this week! */}
+              {searchedTraveler?.birthDate && (() => {
+                const bInfo = getBirthdayInfo(searchedTraveler.birthDate);
+                if (bInfo.isToday) {
+                  return (
+                    <div className="flex items-center gap-3.5 rounded-2xl border-2 border-orange-400 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-100 p-4 text-orange-950 shadow-xs">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-white shadow-xs">
+                        <Cake className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-orange-200/80 px-2 py-0.5 text-[10px] font-black uppercase text-orange-900">
+                          <Sparkles className="h-3 w-3 text-orange-700" />
+                          <span>Parabéns pelo seu dia!</span>
+                        </div>
+                        <h4 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
+                          Hoje é seu Aniversário! 🎉 Feliz {bInfo.turningAge} anos!
+                        </h4>
+                        <p className="text-xs text-orange-900/80">
+                          Toda a equipe da {settings.agencyName || 'Raon System'} celebra com você! Tenha uma viagem inesquecível!
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                if (bInfo.isUpcomingWeek) {
+                  return (
+                    <div className="flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50/80 p-3.5 text-amber-950">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-200 text-amber-800">
+                        <Cake className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs sm:text-sm text-slate-900">
+                          Seu aniversário está chegando! ({bInfo.statusText})
+                        </h4>
+                        <p className="text-[11px] text-amber-800">
+                          Que esta viagem com a {settings.agencyName || 'Raon System'} seja o início de um ciclo maravilhoso e cheio de novas aventuras!
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
 
               {/* Status Rápido: Assento e Pagamento em destaque */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

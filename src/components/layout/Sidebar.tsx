@@ -1,8 +1,8 @@
-import React from 'react';
 import {
   LayoutDashboard,
   Compass,
   Users,
+  Cake,
   Wallet,
   Handshake,
   ShoppingBag,
@@ -13,6 +13,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useApp, ActiveMenu } from '../../context/AppContext';
+import { getBirthdayInfo } from '../../lib/birthdays';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,12 +21,16 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const { activeMenu, setActiveMenu, setSelectedTripId, settings, currentUser, logout, trips, setPublicTripSlug } = useApp();
+  const { activeMenu, setActiveMenu, setSelectedTripId, settings, currentUser, logout, trips, setPublicTripSlug, travelers } = useApp();
+
+  const todayCount = travelers.filter(t => getBirthdayInfo(t.birthDate).isToday).length;
+  const weekCount = travelers.filter(t => getBirthdayInfo(t.birthDate).isUpcomingWeek).length;
 
   const menuItems: { id: ActiveMenu; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'trips', label: 'Viagens', icon: Compass },
     { id: 'travelers', label: 'Viajantes', icon: Users },
+    { id: 'birthdays', label: 'Aniversariantes', icon: Cake },
     { id: 'financial', label: 'Financeiro', icon: Wallet },
     { id: 'partners', label: 'Parceiros', icon: Handshake },
     { id: 'products', label: 'Produtos', icon: ShoppingBag },
@@ -103,7 +108,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   />
                   <span>{item.label}</span>
                 </div>
-                {isActive && <ChevronRight className="h-4 w-4 text-orange-200" />}
+                {item.id === 'birthdays' && todayCount > 0 ? (
+                  <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-black text-slate-950 shadow-xs animate-pulse">
+                    Hoje ({todayCount})
+                  </span>
+                ) : item.id === 'birthdays' && weekCount > 0 ? (
+                  <span className="rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2 py-0.5 text-[10px] font-bold">
+                    +{weekCount}
+                  </span>
+                ) : isActive ? (
+                  <ChevronRight className="h-4 w-4 text-orange-200" />
+                ) : null}
               </button>
             );
           })}

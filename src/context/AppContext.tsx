@@ -39,6 +39,7 @@ export type ActiveMenu =
   | 'dashboard'
   | 'trips'
   | 'travelers'
+  | 'birthdays'
   | 'financial'
   | 'partners'
   | 'products'
@@ -669,6 +670,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         email: travelerData.email || existingTraveler.email,
         city: travelerData.city || existingTraveler.city,
         state: travelerData.state || existingTraveler.state,
+        birthDate: travelerData.birthDate || existingTraveler.birthDate,
+        rg: travelerData.rg || existingTraveler.rg,
       });
     }
 

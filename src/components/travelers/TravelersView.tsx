@@ -14,6 +14,7 @@ import {
   AlertCircle,
   X,
   Upload,
+  Cake,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Traveler } from '../../types';
@@ -24,6 +25,7 @@ import {
   buildWhatsAppLink,
   isValidCPF,
 } from '../../lib/utils';
+import { getBirthdayInfo } from '../../lib/birthdays';
 
 export const TravelersView: React.FC = () => {
   const {
@@ -86,13 +88,23 @@ export const TravelersView: React.FC = () => {
           />
         </div>
 
-        <button
-          onClick={handleOpenNew}
-          className="flex items-center gap-1.5 rounded-xl bg-orange-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-orange-700"
-        >
-          <Plus className="h-4 w-4" />
-          <span>+ Novo Viajante</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActiveMenu('birthdays')}
+            className="flex items-center gap-1.5 rounded-xl border border-orange-200 bg-orange-50 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-orange-700 hover:bg-orange-100 transition-colors"
+          >
+            <Cake className="h-4 w-4 text-orange-600" />
+            <span>Central de Aniversariantes</span>
+          </button>
+
+          <button
+            onClick={handleOpenNew}
+            className="flex items-center gap-1.5 rounded-xl bg-orange-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-orange-700"
+          >
+            <Plus className="h-4 w-4" />
+            <span>+ Novo Viajante</span>
+          </button>
+        </div>
       </div>
 
       {/* Travelers Table */}
@@ -123,13 +135,26 @@ export const TravelersView: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {filteredTravelers.map(t => {
                 const travelerRegs = registrations.filter(r => r.travelerId === t.id && r.status !== 'cancelled');
+                const bInfo = getBirthdayInfo(t.birthDate);
 
                 return (
                   <tr key={t.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900">{t.fullName}</div>
+                      <div className="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
+                        <span>{t.fullName}</span>
+                        {bInfo.isToday && (
+                          <span className="rounded-full bg-orange-100 text-orange-800 px-2 py-0.5 text-[10px] font-black animate-pulse">
+                            🎂 Aniversário Hoje!
+                          </span>
+                        )}
+                        {bInfo.isUpcomingWeek && (
+                          <span className="rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 text-[10px] font-bold">
+                            🎂 {bInfo.statusText}
+                          </span>
+                        )}
+                      </div>
                       <div className="text-[11px] text-slate-400">
-                        Nasc: {formatDateBR(t.birthDate)}
+                        Nasc: {formatDateBR(t.birthDate)} {bInfo.hasBirthday ? `(${bInfo.formattedDayMonth})` : ''}
                       </div>
                     </td>
 

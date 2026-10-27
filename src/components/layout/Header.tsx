@@ -1,6 +1,7 @@
 import React from 'react';
-import { Menu, Plus, Compass } from 'lucide-react';
+import { Menu, Plus, Compass, Cake } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { getBirthdayInfo } from '../../lib/birthdays';
 
 interface HeaderProps {
   onOpenMobileMenu: () => void;
@@ -20,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenNewTripM
         return selectedTrip ? selectedTrip.name : 'Gestão de Viagens';
       case 'travelers':
         return 'Viajantes & Documentos';
+      case 'birthdays':
+        return 'Gestão de Aniversariantes & Alertas';
       case 'financial':
         return 'Controle Financeiro Geral';
       case 'partners':
@@ -34,6 +37,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenNewTripM
         return 'Raon System';
     }
   };
+
+  const { travelers, setActiveMenu } = useApp();
+  const birthdaysToday = travelers.filter(t => getBirthdayInfo(t.birthDate).isToday);
+  const birthdaysWeek = travelers.filter(t => getBirthdayInfo(t.birthDate).isUpcomingWeek);
+  const totalBirthdayAlerts = birthdaysToday.length + birthdaysWeek.length;
 
   return (
     <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md sm:px-8">
@@ -68,6 +76,40 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenNewTripM
 
       {/* Zone 2: Contextual shortcuts / quick status */}
       <div className="hidden md:flex items-center gap-3">
+        {/* Birthday Alert Notification Pill */}
+        {totalBirthdayAlerts > 0 ? (
+          <button
+            onClick={() => {
+              setSelectedTripId(null);
+              setActiveMenu('birthdays');
+            }}
+            title={birthdaysToday.length > 0 ? 'Há aniversariantes comemorando hoje! Clique para ver' : 'Há aniversariantes nos próximos dias'}
+            className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs cursor-pointer ${
+              birthdaysToday.length > 0
+                ? 'bg-orange-100 text-orange-800 border border-orange-300 animate-pulse hover:bg-orange-200'
+                : 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'
+            }`}
+          >
+            <Cake className="h-4 w-4 text-orange-600 shrink-0" />
+            <span>
+              {birthdaysToday.length > 0
+                ? `${birthdaysToday.length} ${birthdaysToday.length === 1 ? 'aniversariante hoje!' : 'aniversariantes hoje!'}`
+                : `${birthdaysWeek.length} ${birthdaysWeek.length === 1 ? 'aniversário esta semana' : 'aniversários esta semana'}`}
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              setSelectedTripId(null);
+              setActiveMenu('birthdays');
+            }}
+            className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200 transition-colors"
+          >
+            <Cake className="h-3.5 w-3.5 text-slate-400" />
+            <span>Aniversários</span>
+          </button>
+        )}
+
         <div className="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
           <Compass className="h-3.5 w-3.5 text-orange-600" />
           <span>{trips.filter(t => t.status === 'publicada').length} viagens publicadas</span>

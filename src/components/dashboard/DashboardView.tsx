@@ -11,6 +11,9 @@ import {
   Copy,
   Check,
   Bus,
+  Cake,
+  Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -19,15 +22,27 @@ import {
   calculateTripOccupancy,
   calculateTripFinances,
   buildWhatsAppLink,
+  formatPhoneBR,
 } from '../../lib/utils';
+import {
+  getBirthdayInfo,
+  buildBirthdayWhatsAppMessage,
+  enrichAndSortTravelersByBirthday,
+} from '../../lib/birthdays';
 
 interface DashboardViewProps {
   onOpenNewTripModal: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenNewTripModal }) => {
-  const { trips, registrations, payments, expenses, setSelectedTripId, setActiveMenu, setPublicTripSlug, setPublicCheckinSlug } = useApp();
+  const { trips, registrations, payments, expenses, travelers, setSelectedTripId, setActiveMenu, setPublicTripSlug, setPublicCheckinSlug } = useApp();
   const [copiedTripId, setCopiedTripId] = useState<string | null>(null);
+
+  // Birthday metrics for immediate notifications & upcoming alerts
+  const enrichedTravelers = enrichAndSortTravelersByBirthday(travelers);
+  const birthdaysToday = enrichedTravelers.filter(t => t.birthdayInfo.isToday);
+  const birthdaysWeek = enrichedTravelers.filter(t => t.birthdayInfo.isUpcomingWeek);
+  const spotlightBirthdays = enrichedTravelers.filter(t => t.birthdayInfo.hasBirthday && t.birthdayInfo.daysUntil <= 15).slice(0, 4);
 
   // Derived metrics from real data
   const publishedTrips = trips.filter(t => t.status === 'publicada');
@@ -92,6 +107,75 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenNewTripModal
 
   return (
     <div className="space-y-8 pb-12">
+      {/* 🎂 FESTIVE TODAY BIRTHDAY BANNER */}
+      {birthdaysToday.length > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border-2 border-orange-500 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-100/80 p-4 text-orange-950 shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-white shadow-xs">
+              <Cake className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-orange-200/80 px-2.5 py-0.5 text-[10px] font-extrabold uppercase text-orange-900 tracking-wide">
+                <Sparkles className="h-3 w-3 text-orange-700" />
+                <span>Notificação de Hoje</span>
+              </div>
+              <h4 className="font-bold text-sm sm:text-base text-slate-900 mt-0.5">
+                🎉 Hoje é aniversário de {birthdaysToday.map(t => t.fullName).join(', ')}!
+              </h4>
+              <p className="text-xs text-orange-900/80">
+                Envie os parabéns e ofereça um voucher comemorativo para garantir a próxima reserva.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => {
+                const traveler = birthdaysToday[0];
+                const cleanPhone = traveler.phone.replace(/\D/g, '');
+                const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+                const text = buildBirthdayWhatsAppMessage(traveler, 'Raon System');
+                window.open(`https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(text)}`, '_blank');
+              }}
+              className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>WhatsApp Parabéns</span>
+            </button>
+            <button
+              onClick={() => setActiveMenu('birthdays')}
+              className="rounded-xl border border-orange-300 bg-white px-3.5 py-2 text-xs font-semibold text-orange-900 hover:bg-orange-50 transition-colors"
+            >
+              Ver Central
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ⏰ UPCOMING WEEK BIRTHDAYS ALERT */}
+      {birthdaysWeek.length > 0 && birthdaysToday.length === 0 && (
+        <div className="flex items-center justify-between rounded-2xl border border-amber-300 bg-amber-50/90 p-4 text-amber-950 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-200 text-amber-800">
+              <Cake className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm">
+                Alerta de Aniversários: {birthdaysWeek.length} {birthdaysWeek.length === 1 ? 'cliente comemora esta semana' : 'clientes comemoram esta semana'}
+              </h4>
+              <p className="text-xs text-amber-800">
+                {birthdaysWeek.map(t => `${t.fullName.split(' ')[0]} (${t.birthdayInfo.statusText})`).join(' • ')}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveMenu('birthdays')}
+            className="rounded-lg bg-amber-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 transition-colors whitespace-nowrap"
+          >
+            Ver Aniversariantes
+          </button>
+        </div>
+      )}
+
       {/* Critical Alerts Banner (if pending registrations or full trips exist) */}
       {(pendingRegistrations.length > 0 || fullTrips.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -269,6 +353,100 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onOpenNewTripModal
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Aniversariantes em Destaque (Hoje & Próximos) */}
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
+              <Cake className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                Aniversariantes em Destaque
+              </h2>
+              <p className="text-xs text-slate-500">
+                Acompanhe clientes que fazem aniversário hoje ou nos próximos dias para fidelização
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveMenu('birthdays')}
+            className="flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700"
+          >
+            <span>Ver Central de Aniversariantes</span>
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        {spotlightBirthdays.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-xs text-slate-500">
+            Nenhum aniversário previsto para os próximos 15 dias. Todos os aniversários de novos inscritos são registrados automaticamente.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {spotlightBirthdays.map(t => {
+              const info = t.birthdayInfo;
+              return (
+                <div
+                  key={t.id}
+                  className={`relative flex flex-col justify-between rounded-2xl border p-4 transition-all shadow-xs ${
+                    info.isToday
+                      ? 'border-2 border-orange-500 bg-orange-50/50 ring-2 ring-orange-200'
+                      : info.isUpcomingWeek
+                      ? 'border-amber-300 bg-amber-50/30'
+                      : 'border-slate-200 bg-white'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${
+                          info.isToday
+                            ? 'bg-orange-600 text-white animate-pulse'
+                            : info.isUpcomingWeek
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        {info.isToday ? '🎉 Hoje!' : info.statusText}
+                      </span>
+                      <span className="text-[11px] font-bold text-slate-500">
+                        {info.day}/{info.month.toString().padStart(2, '0')}
+                      </span>
+                    </div>
+
+                    <h4 className="font-bold text-slate-900 text-sm truncate">
+                      {t.fullName}
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {info.isToday ? `Completou ${info.turningAge} anos` : `Vai completar ${info.turningAge} anos`}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1 truncate">
+                      {t.city ? `${t.city}/${t.state}` : 'Cliente Raon'} • {formatPhoneBR(t.phone) || t.phone}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => {
+                        const cleanPhone = t.phone.replace(/\D/g, '');
+                        const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+                        const text = buildBirthdayWhatsAppMessage(t, 'Raon System');
+                        window.open(`https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(text)}`, '_blank');
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>{info.isToday ? 'Parabenizar Hoje' : 'WhatsApp'}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Trips List with Progress & Live Occupancy */}

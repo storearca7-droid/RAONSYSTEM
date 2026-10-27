@@ -468,13 +468,21 @@ export const INITIAL_TRIPS: Trip[] = [
   },
 ];
 
+const getRelativeBirthDate = (dayOffset: number, birthYear: number): string => {
+  const d = new Date();
+  d.setDate(d.getDate() + dayOffset);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${birthYear}-${m}-${day}`;
+};
+
 export const INITIAL_TRAVELERS: Traveler[] = [
   {
     id: 'trav_1',
     fullName: 'Ana Clara Albuquerque',
     cpf: '81249210452',
     rg: '3491028 SSP/AL',
-    birthDate: '1989-05-14',
+    birthDate: getRelativeBirthDate(0, 1991), // Aniversário HOJE!
     phone: '82996541234',
     email: 'ana.albuquerque@gmail.com',
     city: 'Maceió',
@@ -490,7 +498,7 @@ export const INITIAL_TRAVELERS: Traveler[] = [
     fullName: 'Bruno Vinícius Menezes',
     cpf: '65432198701',
     rg: '2847192 SSP/AL',
-    birthDate: '1993-11-22',
+    birthDate: getRelativeBirthDate(3, 1993), // Em 3 dias!
     phone: '82987124433',
     email: 'bruno.menezes@yahoo.com.br',
     city: 'Arapiraca',
@@ -522,7 +530,7 @@ export const INITIAL_TRAVELERS: Traveler[] = [
     fullName: 'Diego Fernando Cavalcante',
     cpf: '98712345600',
     rg: '1928374 SSP/AL',
-    birthDate: '1978-08-30',
+    birthDate: getRelativeBirthDate(6, 1978), // Em 6 dias (esta semana)!
     phone: '82991827364',
     email: 'diego.cavalcante@empresa.com.br',
     city: 'Maceió',
@@ -548,6 +556,22 @@ export const INITIAL_TRAVELERS: Traveler[] = [
     emergencyContactPhone: '79988112233',
     notes: 'Inscrição feita via link público no Instagram.',
     createdAt: '2026-09-08T16:10:00Z',
+  },
+  {
+    id: 'trav_6',
+    fullName: 'Mariana Duarte Castro',
+    cpf: '45678912304',
+    rg: '4928172 SSP/AL',
+    birthDate: '1990-12-25',
+    phone: '82998877665',
+    email: 'mariana.castro@gmail.com',
+    city: 'Maceió',
+    state: 'AL',
+    address: 'Rua Sandoval Arroxelas, 300 - Ponta Verde',
+    emergencyContactName: 'Carlos Castro (Pai)',
+    emergencyContactPhone: '82993322110',
+    notes: 'Adora passeios de barco e trilhas ecológicas.',
+    createdAt: '2026-09-12T10:00:00Z',
   },
 ];
 
